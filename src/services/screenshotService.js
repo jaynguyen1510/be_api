@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import Chromium from "chrome-aws-lambda";
 
 export const takeScreenshotsCellPhoneS = async (url) => {
   console.log(
@@ -20,7 +21,7 @@ export const takeScreenshotsCellPhoneS = async (url) => {
       "--disable-dev-shm-usage", // Giảm yêu cầu bộ nhớ trên hệ thống
       "--disable-gpu", // Không cần GPU trên máy chủ
     ],
-    protocolTimeout: 60000, // Tăng thời gian timeout
+    ignoreHTTPSErrors: true, // Bỏ qua lỗi SSL
   });
 
   const page = await browser.newPage();
@@ -160,7 +161,7 @@ export const takeScreenshotsDiDongViet = async (url) => {
       "--disable-dev-shm-usage", // Giảm yêu cầu bộ nhớ trên hệ thống
       "--disable-gpu", // Không cần GPU trên máy chủ
     ],
-    protocolTimeout: 60000, // Tăng thời gian timeout
+    ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
