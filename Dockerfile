@@ -1,12 +1,12 @@
-# Chạy Puppeteer trên Docker với image chính thức của Puppeteer
-FROM ghcr.io/puppeteer/puppeteer:23.11.1
+# Sử dụng Node.js image chính thức làm base
+FROM node:18-bullseye-slim
 
-# Chuyển sang user root để cài đặt các thư viện
+# Chuyển sang quyền root để cài đặt các thư viện cần thiết
 USER root
 
-# Cập nhật và cài đặt các thư viện cần thiết cho Puppeteer
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
+# Cập nhật apt và cài đặt Chromium và các thư viện liên quan
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    chromium \
     fonts-liberation \
     libasound2 \
     libatk-bridge2.0-0 \
@@ -39,37 +39,33 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     libxss1 \
     libxtst6 \
-    lsb-release \
     wget \
-    xdg-utils
+    xdg-utils && \
+    rm -rf /var/lib/apt/lists/*
 
-# Thêm kho lưu trữ Google Chrome vào apt
-RUN curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | tee /etc/apt/trusted.gpg.d/google.asc
-
-RUN echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list
-
-# Cập nhật lại apt và cài đặt google-chrome-stable
-RUN apt-get update && apt-get install -y google-chrome-stable
-
-# Cấu hình cho Puppeteer không tải Chromium và chỉ định đường dẫn đến Google Chrome
+# Đặt đường dẫn thực thi Chromium cho Puppeteer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-# Cài đặt thư viện ứng dụng
+# Tạo thư mục làm việc
 WORKDIR /usr/src/app
 
-# Sao chép package.json và cài đặt các phụ thuộc
+# Sao chép tệp package.json và package-lock.json (nếu có)
 COPY package*.json ./
-RUN npm ci
-USER root
+# Chạy cài đặt nodemon toàn cục
 RUN npm install -g nodemon
-USER pptruser
 
-# Chuyển lại sang user pptruser sau khi cài đặt
-USER pptruser
+# Cài đặt các dependencies
+RUN npm ci
 
-# Sao chép tất cả các tệp khác vào container
+# Sao chép toàn bộ mã nguồn vào container
 COPY . .
 
-# Chạy ứng dụng với Nodemon
+# Chuyển quyền trở lại user không phải root để tăng bảo mật
+USER node
+
+# Mở cổng (nếu ứng dụng sử dụng HTTP)
+EXPOSE 3000
+
+# Lệnh chạy ứng dụng
 CMD ["nodemon", "index.js"]
