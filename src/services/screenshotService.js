@@ -1,21 +1,26 @@
 import puppeteer from "puppeteer";
-import chromium from "chrome-aws-lambda";
 
 export const takeScreenshotsCellPhoneS = async (url) => {
-  console.log("Puppeteer Chromium path:", await puppeteer.executablePath());
+  console.log(
+    "link",
+    process.env.NODE_ENV === "production"
+      ? process.env.PUPPETEER_EXECUTABLE_PATH
+      : puppeteer.executablePath()
+  );
 
   const browser = await puppeteer.launch({
-    headless: chromium.headless,
-    executablePath: await puppeteer.executablePath(), // Lấy đường dẫn tự động
-
+    headless: true,
+    executablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETEER_EXECUTABLE_PATH // Sử dụng đường dẫn đến Chrome trong Docker
+        : puppeteer.executablePath(), // Sử dụng đường dẫn mặc định của Puppeteer
     args: [
-      "--no-sandbox",
+      "--no-sandbox", // Bắt buộc trên Render để tránh lỗi sandbox
       "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu",
+      "--disable-dev-shm-usage", // Giảm yêu cầu bộ nhớ trên hệ thống
+      "--disable-gpu", // Không cần GPU trên máy chủ
     ],
-    defaultViewport: chromium.defaultViewport,
-    ignoreHTTPSErrors: true,
+    protocolTimeout: 60000, // Tăng thời gian timeout
   });
 
   const page = await browser.newPage();
@@ -25,7 +30,7 @@ export const takeScreenshotsCellPhoneS = async (url) => {
 
   try {
     await page.setViewport({ width: 1280, height: 720 });
-    await page.goto(url, { waitUntil: "networkidle2" });
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
 
     const clickLoadMoreLinks = async () => {
       while (true) {
@@ -144,16 +149,18 @@ export const takeScreenshotsCellPhoneS = async (url) => {
 
 export const takeScreenshotsDiDongViet = async (url) => {
   const browser = await puppeteer.launch({
-    headless: chromium.headless,
-    executablePath: await puppeteer.executablePath(), // Lấy đường dẫn tự động
+    headless: true,
+    executablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETEER_EXECUTABLE_PATH // Sử dụng đường dẫn đến Chrome trong Docker
+        : puppeteer.executablePath(), // Sử dụng đường dẫn mặc định của Puppeteer
     args: [
-      "--no-sandbox",
+      "--no-sandbox", // Bắt buộc trên Render để tránh lỗi sandbox
       "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu",
+      "--disable-dev-shm-usage", // Giảm yêu cầu bộ nhớ trên hệ thống
+      "--disable-gpu", // Không cần GPU trên máy chủ
     ],
-    defaultViewport: chromium.defaultViewport,
-    ignoreHTTPSErrors: true,
+    protocolTimeout: 60000, // Tăng thời gian timeout
   });
   const page = await browser.newPage();
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -161,7 +168,7 @@ export const takeScreenshotsDiDongViet = async (url) => {
   const allScreenshots = [];
   try {
     await page.setViewport({ width: 1280, height: 720 });
-    await page.goto(url, { waitUntil: "networkidle2" });
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
 
     // Function to click "Load More" button until no more buttons
     const clickLoadMoreLinks = async () => {
