@@ -4,7 +4,8 @@ import chromium from "chrome-aws-lambda";
 export const takeScreenshotsCellPhoneS = async (url) => {
   const browser = await puppeteer.launch({
     headless: chromium.headless,
-    executablePath: await chromium.executablePath,
+    executablePath:
+      "C:\\Users\\nhat nam\\.cache\\puppeteer\\chrome\\win64-131.0.6778.87\\chrome-win64\\chrome.exe",
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -141,14 +142,15 @@ export const takeScreenshotsCellPhoneS = async (url) => {
 export const takeScreenshotsDiDongViet = async (url) => {
   const browser = await puppeteer.launch({
     headless: chromium.headless,
-    executablePath: await chromium.executablePath,
-    defaultViewport: chromium.defaultViewport,
+    executablePath:
+      "C:\\Users\\nhat nam\\.cache\\puppeteer\\chrome\\win64-131.0.6778.87\\chrome-win64\\chrome.exe",
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
       "--disable-gpu",
     ],
+    defaultViewport: chromium.defaultViewport,
     ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
