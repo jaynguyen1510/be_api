@@ -20,3 +20,4 @@ yarn-error.log
 
 # Các tệp được tạo ra khi sử dụng Puppeteer hoặc công cụ khác
 /puppeteer-cache/
+.cache/
