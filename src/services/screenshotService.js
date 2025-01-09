@@ -1,16 +1,18 @@
 import puppeteer from "puppeteer";
-import Chromium from "chrome-aws-lambda";
+import chromium from "chrome-aws-lambda";
 
 export const takeScreenshotsCellPhoneS = async (url) => {
   const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: await Chromium.executablePath,
+    headless: chromium.headless,
+    executablePath: await chromium.executablePath,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
       "--disable-gpu",
     ],
+    defaultViewport: chromium.defaultViewport,
+    ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
 
@@ -138,15 +140,16 @@ export const takeScreenshotsCellPhoneS = async (url) => {
 
 export const takeScreenshotsDiDongViet = async (url) => {
   const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: await Chromium.executablePath,
-
+    headless: chromium.headless,
+    executablePath: await chromium.executablePath,
+    defaultViewport: chromium.defaultViewport,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
       "--disable-gpu",
     ],
+    ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
