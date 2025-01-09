@@ -1,8 +1,10 @@
 import puppeteer from "puppeteer";
+import Chromium from "chrome-aws-lambda";
 
 export const takeScreenshotsCellPhoneS = async (url) => {
   const browser = await puppeteer.launch({
     headless: true,
+    executablePath: await Chromium.executablePath,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -137,6 +139,8 @@ export const takeScreenshotsCellPhoneS = async (url) => {
 export const takeScreenshotsDiDongViet = async (url) => {
   const browser = await puppeteer.launch({
     headless: true,
+    executablePath: await Chromium.executablePath,
+
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
